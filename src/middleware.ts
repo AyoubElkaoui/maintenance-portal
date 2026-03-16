@@ -15,7 +15,8 @@ export async function middleware(req: NextRequest) {
     pathname === '/favicon.ico' ||
     PUBLIC_FILE.test(pathname) ||
     pathname.startsWith('/public') ||
-    pathname === '/signin'
+    pathname === '/signin' ||
+    pathname.startsWith('/download')
   ) {
     return NextResponse.next();
   }
