@@ -39,6 +39,7 @@ export async function GET(
     const { id } = await params;
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'excel';
+    const shouldDelete = searchParams.get('delete') !== 'false';
 
     const upload = await getUpload(id);
 
@@ -60,8 +61,10 @@ export async function GET(
     const reviewedData = await getUploadData(id);
     const comments = upload.comments || '';
 
-    // Delete the upload after download (automatic cleanup)
-    await deleteUpload(id);
+    // Delete the upload after download (automatic cleanup) - only if not explicitly prevented
+    if (shouldDelete) {
+      await deleteUpload(id);
+    }
 
     if (format === 'excel') {
       return generateExcelFile(reviewedData, comments, upload.filename);
@@ -82,11 +85,46 @@ export async function GET(
   }
 }
 
-function generateExcelFile(reviewedData: Record<string, unknown>[], comments: string, filename: string) {
-  // Create workbook
-  const wb = XLSX.utils.book_new();
+function getRelatieNaam(row: Record<string, unknown>): string {
+  return String(
+    row['Relatienaam'] || row['relatienaam'] || row['Relatie'] || row['relatie'] ||
+    row['Bedrijfsnaam'] || row['bedrijfsnaam'] || row['Naam'] || row['naam'] || 'Onbekend'
+  );
+}
 
-  // Prepare data for Excel
+function groupByRelatie(data: Record<string, unknown>[]): Map<string, Record<string, unknown>[]> {
+  const grouped = new Map<string, Record<string, unknown>[]>();
+  for (const row of data) {
+    const name = getRelatieNaam(row);
+    if (!grouped.has(name)) {
+      grouped.set(name, []);
+    }
+    grouped.get(name)!.push(row);
+  }
+  return grouped;
+}
+
+function getHeaders(reviewedData: Record<string, unknown>[]) {
+  const originalHeaders = Object.keys(reviewedData[0]).filter(key =>
+    !key.startsWith('_') && !['Akkoord', 'Afgewezen', 'Achterstallige dagen', 'Aantal dagen open'].includes(key)
+  );
+  const headers = [...originalHeaders, 'Dagen open', 'Herinnering', 'Herinnering_Opmerking', 'Review_Status', 'Review_Opmerkingen'];
+  return { originalHeaders, headers };
+}
+
+function getRowValues(row: Record<string, unknown>, originalHeaders: string[]) {
+  const originalValues = originalHeaders.map(header => String(row[header] ?? ''));
+  const daysOpen = calculateDaysOpen(row);
+  const daysOpenStr = daysOpen !== null ? (daysOpen > 0 ? `+${daysOpen}` : daysOpen.toString()) : '-';
+  const herinnering = row._herinnering ? 'Ja' : 'Nee';
+  const herinneringOpmerking = String(row._herinneringOpmerking || '');
+  const status = row._status === 'issue' ? 'Probleem' : 'Goedgekeurd';
+  const rowComments = String(row._comments || '');
+  return [...originalValues, daysOpenStr, herinnering, herinneringOpmerking, status, rowComments];
+}
+
+function generateExcelFile(reviewedData: Record<string, unknown>[], comments: string, filename: string) {
+  const wb = XLSX.utils.book_new();
   const excelData: (string | number | boolean)[][] = [];
 
   // Add reviewer comments at the top if any
@@ -98,64 +136,48 @@ function generateExcelFile(reviewedData: Record<string, unknown>[], comments: st
     excelData.push([]); // Empty row
   }
 
-  // Add the reviewed data
   if (reviewedData.length > 0) {
-    // Get headers from first row, excluding internal fields, Akkoord/Afgewezen columns, and unwanted columns
-    const originalHeaders = Object.keys(reviewedData[0]).filter(key =>
-      !key.startsWith('_') && !['Akkoord', 'Afgewezen', 'Achterstallige dagen', 'Aantal dagen open'].includes(key)
-    );
-    const headers = [...originalHeaders, 'Dagen open', 'Review_Status', 'Review_Opmerkingen'];
-    excelData.push(headers);
+    const { originalHeaders, headers } = getHeaders(reviewedData);
+    const grouped = groupByRelatie(reviewedData);
 
-    // Add data rows
-    reviewedData.forEach((row: Record<string, unknown>) => {
-      const originalValues = originalHeaders.map(header => String(row[header] ?? ''));
+    for (const [relatieNaam, rows] of grouped) {
+      // Add client name as section header
+      excelData.push([`Klant: ${relatieNaam}`]);
+      excelData.push(headers);
 
-      // Calculate days open using the same logic as review page
-      const daysOpen = calculateDaysOpen(row);
-      const daysOpenStr = daysOpen !== null ? (daysOpen > 0 ? `+${daysOpen}` : daysOpen.toString()) : '-';
+      for (const row of rows) {
+        excelData.push(getRowValues(row, originalHeaders));
+      }
 
-      const status = row._status === 'issue' ? 'Probleem' : 'Goedgekeurd';
-      const rowComments = String(row._comments || '');
-      excelData.push([...originalValues, daysOpenStr, status, rowComments]);
-    });
+      excelData.push([]); // Empty row between clients
+    }
 
-    // Auto-size columns
     const colWidths = headers.map((header: string) => ({ wch: Math.max(header.length, 15) }));
     const ws = XLSX.utils.aoa_to_sheet(excelData);
     ws['!cols'] = colWidths;
-
-    // Add worksheet to workbook
     XLSX.utils.book_append_sheet(wb, ws, 'Reviewed Data');
   } else {
-    // Create empty worksheet if no data
     const ws = XLSX.utils.aoa_to_sheet(excelData);
     XLSX.utils.book_append_sheet(wb, ws, 'Reviewed Data');
   }
 
-  // Generate buffer
   const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
-  // Return Excel file
-  const response = new NextResponse(buf, {
+  return new NextResponse(buf, {
     status: 200,
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename="reviewed_${filename.replace('.csv', '')}.xlsx"`,
     },
   });
-
-  return response;
 }
 
 function generatePDFFile(reviewedData: Record<string, unknown>[], comments: string, filename: string) {
   const doc = new jsPDF('landscape');
 
-  // Add title
   doc.setFontSize(16);
   doc.text('Reviewed Data Report', 20, 20);
 
-  // Add filename
   doc.setFontSize(12);
   doc.text(`Source: ${filename}`, 20, 35);
 
@@ -168,69 +190,72 @@ function generatePDFFile(reviewedData: Record<string, unknown>[], comments: stri
     yPosition += 10;
 
     doc.setFontSize(10);
-    const commentLines = doc.splitTextToSize(comments, 250); // Wider for landscape
+    const commentLines = doc.splitTextToSize(comments, 250);
     doc.text(commentLines, 20, yPosition);
     yPosition += commentLines.length * 5 + 10;
   }
 
-  // Add the reviewed data table
   if (reviewedData.length > 0) {
-    // Get headers from first row, excluding internal fields, Akkoord/Afgewezen columns, and unwanted columns
-    const originalHeaders = Object.keys(reviewedData[0]).filter(key =>
-      !key.startsWith('_') && !['Akkoord', 'Afgewezen', 'Achterstallige dagen', 'Aantal dagen open'].includes(key)
-    );
-    const headers = [...originalHeaders, 'Dagen open', 'Review Status', 'Review Opmerkingen'];
+    const { originalHeaders, headers } = getHeaders(reviewedData);
+    const grouped = groupByRelatie(reviewedData);
 
-    // Prepare table data
-    const tableData = reviewedData.map((row: Record<string, unknown>) => {
-      const originalValues = originalHeaders.map(header => String(row[header] ?? ''));
+    for (const [relatieNaam, rows] of grouped) {
+      // Check if we need a new page
+      if (yPosition > 170) {
+        doc.addPage();
+        yPosition = 20;
+      }
 
-      // Calculate days open using the same logic as review page
-      const daysOpen = calculateDaysOpen(row);
-      const daysOpenStr = daysOpen !== null ? (daysOpen > 0 ? `+${daysOpen}` : daysOpen.toString()) : '-';
+      // Add client name as section header
+      doc.setFontSize(12);
+      doc.setFont(undefined as unknown as string, 'bold');
+      doc.text(`Klant: ${relatieNaam}`, 20, yPosition);
+      doc.setFont(undefined as unknown as string, 'normal');
+      yPosition += 8;
 
-      const status = row._status === 'issue' ? 'Probleem' : 'Goedgekeurd';
-      const rowComments = String(row._comments || '');
-      return [...originalValues, daysOpenStr, status, rowComments];
-    });
+      const tableData = rows.map((row: Record<string, unknown>) => {
+        return getRowValues(row, originalHeaders);
+      });
 
-    // Add table
-    autoTable(doc, {
-      head: [headers],
-      body: tableData,
-      startY: yPosition,
-      styles: {
-        fontSize: 7, // Smaller font for landscape
-        cellPadding: 1,
-      },
-      headStyles: {
-        fillColor: [30, 64, 175], // Elmar blue
-        textColor: 255,
-        fontStyle: 'bold',
-      },
-      alternateRowStyles: {
-        fillColor: [248, 250, 252], // Light gray
-      },
-      margin: { top: 10 },
-      columnStyles: {
-        [headers.length - 3]: { cellWidth: 20 }, // Dagen open column
-        [headers.length - 2]: { cellWidth: 25 }, // Review Status column
-        [headers.length - 1]: { cellWidth: 40 }, // Review Opmerkingen column
-      },
-    });
+      autoTable(doc, {
+        head: [headers],
+        body: tableData,
+        startY: yPosition,
+        styles: {
+          fontSize: 7,
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [30, 64, 175],
+          textColor: 255,
+          fontStyle: 'bold',
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252],
+        },
+        margin: { top: 10 },
+        columnStyles: {
+          [headers.length - 5]: { cellWidth: 20 }, // Dagen open
+          [headers.length - 4]: { cellWidth: 20 }, // Herinnering
+          [headers.length - 3]: { cellWidth: 30 }, // Herinnering Opmerking
+          [headers.length - 2]: { cellWidth: 25 }, // Review Status
+          [headers.length - 1]: { cellWidth: 40 }, // Review Opmerkingen
+        },
+      });
+
+      // Get the final Y position after the table
+      const finalY = (doc as unknown as Record<string, unknown>).lastAutoTable as { finalY: number } | undefined;
+      yPosition = (finalY?.finalY || yPosition) + 10;
+    }
   }
 
-  // Generate PDF buffer
   const pdfBuffer = doc.output('arraybuffer');
 
-  // Return PDF file
-  const response = new NextResponse(pdfBuffer, {
+  return new NextResponse(pdfBuffer, {
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="reviewed_${filename.replace('.csv', '')}.pdf"`,
     },
   });
-
-  return response;
 }

@@ -8,6 +8,8 @@ import { Navbar } from '@/components/Navbar';
 interface RowData extends Record<string, unknown> {
   _comments?: string;
   _rejected?: boolean;
+  _herinnering?: boolean;
+  _herinneringOpmerking?: string;
 }
 
 interface UploadData {
@@ -140,8 +142,10 @@ export default function ReviewPage() {
           
           return {
             ...row,
-            _comments: '',
-            _rejected: autoReject
+            _comments: row._comments || '',
+            _rejected: row._rejected ?? autoReject,
+            _herinnering: row._herinnering || false,
+            _herinneringOpmerking: row._herinneringOpmerking || '',
           };
         });
         
@@ -275,6 +279,21 @@ export default function ReviewPage() {
   const toggleRowRejection = (index: number) => {
     const newData = [...reviewedData];
     newData[index] = { ...newData[index], _rejected: !newData[index]._rejected };
+    setReviewedData(newData);
+  };
+
+  const toggleHerinnering = (index: number) => {
+    const newData = [...reviewedData];
+    newData[index] = { ...newData[index], _herinnering: !newData[index]._herinnering };
+    if (!newData[index]._herinnering) {
+      newData[index]._herinneringOpmerking = '';
+    }
+    setReviewedData(newData);
+  };
+
+  const updateHerinneringOpmerking = (index: number, opmerking: string) => {
+    const newData = [...reviewedData];
+    newData[index] = { ...newData[index], _herinneringOpmerking: opmerking };
     setReviewedData(newData);
   };
 
@@ -672,6 +691,15 @@ export default function ReviewPage() {
                     />
                     <span className="text-xs text-red-600 dark:text-red-400">Afwijzen</span>
                   </label>
+                  <label className="flex items-center space-x-1">
+                    <input
+                      type="checkbox"
+                      checked={row._herinnering || false}
+                      onChange={() => toggleHerinnering(absoluteIndex)}
+                      className="rounded border-slate-200 dark:border-slate-600 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-xs text-blue-600 dark:text-blue-400">Herinnering</span>
+                  </label>
                   <button
                     onClick={() => handleRowClick(absoluteIndex)}
                     className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
@@ -694,6 +722,18 @@ export default function ReviewPage() {
                   </div>
                 )}
               </div>
+
+              {row._herinnering && (
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    value={String(row._herinneringOpmerking || '')}
+                    onChange={(e) => updateHerinneringOpmerking(absoluteIndex, e.target.value)}
+                    placeholder="Herinnering opmerking..."
+                    className="w-full px-2 py-1 text-xs border border-blue-200 dark:border-blue-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              )}
 
               {row._comments && (
                 <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-sm text-blue-800 dark:text-blue-400">
@@ -720,6 +760,12 @@ export default function ReviewPage() {
                 ))}
                 <th className="px-2 py-2 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 border-b border-r border-slate-200 dark:border-slate-600 w-16">
                   Afwijzen
+                </th>
+                <th className="px-2 py-2 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 border-b border-r border-slate-200 dark:border-slate-600 w-24">
+                  Herinnering
+                </th>
+                <th className="px-2 py-2 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 border-b border-r border-slate-200 dark:border-slate-600" style={{ minWidth: '150px' }}>
+                  Herinnering Opmerking
                 </th>
                 <th className="px-2 py-2 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 border-b w-24 sticky right-0 bg-slate-100 dark:bg-slate-700 z-30">
                   Opmerking
@@ -753,6 +799,25 @@ export default function ReviewPage() {
                       onChange={() => toggleRowRejection(absoluteIndex)}
                       className="rounded border-slate-200 dark:border-slate-600 text-red-600 focus:ring-red-500"
                     />
+                  </td>
+                  <td className="px-2 py-2 border-r border-slate-200 dark:border-slate-700 text-center">
+                    <input
+                      type="checkbox"
+                      checked={row._herinnering || false}
+                      onChange={() => toggleHerinnering(absoluteIndex)}
+                      className="rounded border-slate-200 dark:border-slate-600 text-blue-600 focus:ring-blue-500"
+                    />
+                  </td>
+                  <td className="px-2 py-2 border-r border-slate-200 dark:border-slate-700">
+                    {row._herinnering && (
+                      <input
+                        type="text"
+                        value={String(row._herinneringOpmerking || '')}
+                        onChange={(e) => updateHerinneringOpmerking(absoluteIndex, e.target.value)}
+                        placeholder="Extra opmerking..."
+                        className="w-full px-2 py-1 text-xs border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-1 focus:ring-blue-500"
+                      />
+                    )}
                   </td>
                   <td className="px-2 py-2 sticky right-0 bg-white dark:bg-slate-800 z-20">
                     <button

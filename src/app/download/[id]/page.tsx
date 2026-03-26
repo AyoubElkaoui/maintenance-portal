@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Download, FileText } from 'lucide-react';
+import { Download, FileText, FileSpreadsheet } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 
 export default function DownloadPage() {
@@ -10,7 +10,35 @@ export default function DownloadPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFormat, setSelectedFormat] = useState<'excel' | 'pdf'>('excel');
+
+  const downloadFile = async (format: 'excel' | 'pdf', shouldDelete: boolean) => {
+    const response = await fetch(`/api/download/${params.id}?format=${format}&delete=${shouldDelete}`);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Download mislukt');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+
+    const contentDisposition = response.headers.get('content-disposition');
+    let filename = `reviewed_file.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+      if (filenameMatch) {
+        filename = filenameMatch[1];
+      }
+    }
+
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
 
   const handleDownload = async () => {
     if (!params.id) return;
@@ -19,32 +47,14 @@ export default function DownloadPage() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/download/${params.id}?format=${selectedFormat}`);
+      // Download Excel first (don't delete yet)
+      await downloadFile('excel', false);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Download mislukt');
-      }
+      // Small delay to prevent browser blocking second download
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-
-      const contentDisposition = response.headers.get('content-disposition');
-      let filename = `reviewed_file.${selectedFormat === 'excel' ? 'xlsx' : 'pdf'}`;
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
-        }
-      }
-
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      // Download PDF second (delete after this one)
+      await downloadFile('pdf', true);
 
       setTimeout(() => {
         router.push('/dashboard');
@@ -78,35 +88,21 @@ export default function DownloadPage() {
           </p>
 
           <div className="mb-8">
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-              Kies formaat
-            </label>
             <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setSelectedFormat('excel')}
-                className={`p-4 border rounded-xl text-center transition-all ${
-                  selectedFormat === 'excel'
-                    ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
-                }`}
-              >
-                <FileText className="w-7 h-7 mx-auto mb-2 text-emerald-600 dark:text-emerald-400" />
+              <div className="p-4 border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-center">
+                <FileSpreadsheet className="w-7 h-7 mx-auto mb-2 text-emerald-600 dark:text-emerald-400" />
                 <div className="font-medium text-slate-900 dark:text-white text-sm">Excel</div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">.xlsx spreadsheet</div>
-              </button>
-              <button
-                onClick={() => setSelectedFormat('pdf')}
-                className={`p-4 border rounded-xl text-center transition-all ${
-                  selectedFormat === 'pdf'
-                    ? 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
-                }`}
-              >
+              </div>
+              <div className="p-4 border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 rounded-xl text-center">
                 <FileText className="w-7 h-7 mx-auto mb-2 text-red-600 dark:text-red-400" />
                 <div className="font-medium text-slate-900 dark:text-white text-sm">PDF</div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">Portable document</div>
-              </button>
+              </div>
             </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+              Beide bestanden worden tegelijk gedownload
+            </p>
           </div>
 
           {error && (
@@ -128,7 +124,7 @@ export default function DownloadPage() {
             ) : (
               <>
                 <Download className="mr-2" size={18} />
-                Download {selectedFormat.toUpperCase()}
+                Download Excel &amp; PDF
               </>
             )}
           </button>
