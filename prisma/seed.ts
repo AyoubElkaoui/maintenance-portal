@@ -7,35 +7,22 @@ async function main() {
   // Create default users - wachtwoord: Elmar@2025
   const hashedPassword = await bcrypt.hash('Elmar@2025', 10);
 
-  // Update or create users
   await prisma.user.upsert({
     where: { email: 'lilly@elmarmaintenance.com' },
-    update: {
-      password: hashedPassword,
-      name: 'Lilly',
-      role: 'uploader',
-    },
-    create: {
-      email: 'lilly@elmarmaintenance.com',
-      name: 'Lilly',
-      role: 'uploader',
-      password: hashedPassword,
-    },
+    update: { password: hashedPassword, name: 'Lilly', role: 'uploader' },
+    create: { email: 'lilly@elmarmaintenance.com', name: 'Lilly', role: 'uploader', password: hashedPassword },
   });
 
   await prisma.user.upsert({
     where: { email: 'pamela@elmarmaintenance.com' },
-    update: {
-      password: hashedPassword,
-      name: 'Pamela',
-      role: 'reviewer',
-    },
-    create: {
-      email: 'pamela@elmarmaintenance.com',
-      name: 'Pamela',
-      role: 'reviewer',
-      password: hashedPassword,
-    },
+    update: { password: hashedPassword, name: 'Pamela', role: 'uploader' },
+    create: { email: 'pamela@elmarmaintenance.com', name: 'Pamela', role: 'uploader', password: hashedPassword },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'brahim@elmarservices.com' },
+    update: { password: hashedPassword, name: 'Brahim', role: 'reviewer' },
+    create: { email: 'brahim@elmarservices.com', name: 'Brahim', role: 'reviewer', password: hashedPassword },
   });
 
   // Create default settings
@@ -43,19 +30,19 @@ async function main() {
     where: { id: 'default' },
     update: {
       uploaderEmail: 'lilly@elmarmaintenance.com',
-      reviewerEmail: 'pamela@elmarmaintenance.com',
+      reviewerEmail: 'brahim@elmarservices.com',
     },
     create: {
       id: 'default',
       uploaderEmail: 'lilly@elmarmaintenance.com',
-      reviewerEmail: 'pamela@elmarmaintenance.com',
+      reviewerEmail: 'brahim@elmarservices.com',
     },
   });
 
   console.log('✅ Database seeded successfully');
-  console.log('📧 Uploader: lilly@elmarmaintenance.com / Elmar@2025');
-  console.log('📧 Reviewer: pamela@elmarmaintenance.com / Elmar@2025');
-  console.log('💡 Wijzig deze credentials via Settings in de app!');
+  console.log('📧 Uploader:  lilly@elmarmaintenance.com / Elmar@2025');
+  console.log('📧 Uploader:  pamela@elmarmaintenance.com / Elmar@2025');
+  console.log('📧 Reviewer:  brahim@elmarservices.com / Elmar@2025');
 }
 
 main()

@@ -17,6 +17,13 @@ const HARDCODED_USERS = [
     email: 'pamela@elmarmaintenance.com',
     password: '$2b$10$CvD2lAuCEJvfkpp4Fl1yuOjXz.XcvXPJ4uDgRDYMoHtIFIbbtzyEO', // Elmar@2025
     name: 'Pamela',
+    role: 'uploader' as const
+  },
+  {
+    id: 'brahim-user',
+    email: 'brahim@elmarservices.com',
+    password: '$2b$10$CvD2lAuCEJvfkpp4Fl1yuOjXz.XcvXPJ4uDgRDYMoHtIFIbbtzyEO', // Elmar@2025
+    name: 'Brahim',
     role: 'reviewer' as const
   }
 ];

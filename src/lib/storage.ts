@@ -59,7 +59,7 @@ export async function getSettings(): Promise<Settings> {
   // Fallback
   return {
     uploaderEmail: process.env.UPLOADER_EMAIL || 'lilly@elmarmaintenance.com',
-    reviewerEmail: process.env.REVIEWER_EMAIL || 'pamela@elmarmaintenance.com',
+    reviewerEmail: process.env.REVIEWER_EMAIL || 'brahim@elmarservices.com',
   };
 }
 
@@ -81,7 +81,7 @@ export async function updateSettings(settings: Partial<Settings>): Promise<Setti
   const created = await prisma.settings.create({
     data: {
       uploaderEmail: settings.uploaderEmail || 'lilly@elmarmaintenance.com',
-      reviewerEmail: settings.reviewerEmail || 'pamela@elmarmaintenance.com',
+      reviewerEmail: settings.reviewerEmail || 'brahim@elmarservices.com',
     },
   });
   
