@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         const uploaderEmail = settings.uploaderEmail;
 
         const appUrl =
-          process.env.NEXT_PUBLIC_APP_URL || "https://portal-cvs.vercel.app";
+          process.env.NEXT_PUBLIC_APP_URL || "https://portal-elmar.vercel.app";
         const fromEmail = process.env.FROM_EMAIL || "info@akwebsolutions.nl";
 
         // Email to reviewer

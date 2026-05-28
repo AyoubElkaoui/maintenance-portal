@@ -255,7 +255,7 @@ export default function SettingsPage() {
                   type="email"
                   value={uploaderEmail}
                   onChange={e => setUploaderEmail(e.target.value)}
-                  placeholder="anissa@bedrijf.nl"
+                  placeholder="lilly@elmarmaintenance.com"
                   className={inputClass}
                 />
               </div>

@@ -6,17 +6,17 @@ import { getUserByEmail } from './storage';
 // Hardcoded users for Vercel (filesystem is read-only)
 const HARDCODED_USERS = [
   {
-    id: 'anissa-user',
-    email: 'anissa@elmarservices.com',
+    id: 'lilly-user',
+    email: 'lilly@elmarmaintenance.com',
     password: '$2b$10$CvD2lAuCEJvfkpp4Fl1yuOjXz.XcvXPJ4uDgRDYMoHtIFIbbtzyEO', // Elmar@2025
-    name: 'Anissa',
+    name: 'Lilly',
     role: 'uploader' as const
   },
   {
-    id: 'brahim-user',
-    email: 'brahim@elmarservices.com',
+    id: 'pamela-user',
+    email: 'pamela@elmarmaintenance.com',
     password: '$2b$10$CvD2lAuCEJvfkpp4Fl1yuOjXz.XcvXPJ4uDgRDYMoHtIFIbbtzyEO', // Elmar@2025
-    name: 'Brahim',
+    name: 'Pamela',
     role: 'reviewer' as const
   }
 ];

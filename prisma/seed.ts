@@ -9,30 +9,30 @@ async function main() {
 
   // Update or create users
   await prisma.user.upsert({
-    where: { email: 'anissa@elmarservices.com' },
+    where: { email: 'lilly@elmarmaintenance.com' },
     update: {
-      password: hashedPassword, // Update password to ensure it's correct
-      name: 'Anissa',
+      password: hashedPassword,
+      name: 'Lilly',
       role: 'uploader',
     },
     create: {
-      email: 'anissa@elmarservices.com',
-      name: 'Anissa',
+      email: 'lilly@elmarmaintenance.com',
+      name: 'Lilly',
       role: 'uploader',
       password: hashedPassword,
     },
   });
 
   await prisma.user.upsert({
-    where: { email: 'brahim@elmarservices.com' },
+    where: { email: 'pamela@elmarmaintenance.com' },
     update: {
-      password: hashedPassword, // Update password to ensure it's correct
-      name: 'Brahim',
+      password: hashedPassword,
+      name: 'Pamela',
       role: 'reviewer',
     },
     create: {
-      email: 'brahim@elmarservices.com',
-      name: 'Brahim',
+      email: 'pamela@elmarmaintenance.com',
+      name: 'Pamela',
       role: 'reviewer',
       password: hashedPassword,
     },
@@ -42,19 +42,19 @@ async function main() {
   await prisma.settings.upsert({
     where: { id: 'default' },
     update: {
-      uploaderEmail: 'anissa@elmarservices.com',
-      reviewerEmail: 'brahim@elmarservices.com',
+      uploaderEmail: 'lilly@elmarmaintenance.com',
+      reviewerEmail: 'pamela@elmarmaintenance.com',
     },
     create: {
       id: 'default',
-      uploaderEmail: 'anissa@elmarservices.com',
-      reviewerEmail: 'brahim@elmarservices.com',
+      uploaderEmail: 'lilly@elmarmaintenance.com',
+      reviewerEmail: 'pamela@elmarmaintenance.com',
     },
   });
 
   console.log('✅ Database seeded successfully');
-  console.log('📧 Uploader: anissa@elmarservices.com / Elmar@2025');
-  console.log('📧 Reviewer: brahim@elmarservices.com / Elmar@2025');
+  console.log('📧 Uploader: lilly@elmarmaintenance.com / Elmar@2025');
+  console.log('📧 Reviewer: pamela@elmarmaintenance.com / Elmar@2025');
   console.log('💡 Wijzig deze credentials via Settings in de app!');
 }
 

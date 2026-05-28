@@ -145,7 +145,7 @@ export default function SignInPage() {
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="naam@elmarservices.com"
+                  placeholder="naam@elmarmaintenance.com"
                   className="w-full pl-11 pr-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 dark:focus:border-blue-500 transition-all outline-none text-sm"
                   required
                   autoComplete="email"
@@ -211,26 +211,26 @@ export default function SignInPage() {
             <div className="grid grid-cols-2 gap-2.5">
               <button
                 type="button"
-                onClick={() => quickLogin('anissa@elmarservices.com')}
+                onClick={() => quickLogin('lilly@elmarmaintenance.com')}
                 className="text-left px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all group"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold text-slate-900 dark:text-white">Anissa</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">Lilly</span>
                   <span className="text-[10px] font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full">Upload</span>
                 </div>
-                <span className="text-xs text-slate-400">anissa@elmarservices.com</span>
+                <span className="text-xs text-slate-400">lilly@elmarmaintenance.com</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => quickLogin('brahim@elmarservices.com')}
+                onClick={() => quickLogin('pamela@elmarmaintenance.com')}
                 className="text-left px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-violet-300 dark:hover:border-violet-700 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all group"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold text-slate-900 dark:text-white">Brahim</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">Pamela</span>
                   <span className="text-[10px] font-semibold bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 px-2 py-0.5 rounded-full">Review</span>
                 </div>
-                <span className="text-xs text-slate-400">brahim@elmarservices.com</span>
+                <span className="text-xs text-slate-400">pamela@elmarmaintenance.com</span>
               </button>
             </div>
           </div>

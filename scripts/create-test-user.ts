@@ -4,43 +4,35 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Hash passwords
-  const anissaPassword = await bcrypt.hash('anissa123', 10);
-  const reviewerPassword = await bcrypt.hash('reviewer123', 10);
+  const hashedPassword = await bcrypt.hash('Elmar@2025', 10);
 
-  // Create or update Anissa
   await prisma.user.upsert({
-    where: { email: 'anissa@example.com' },
-    update: {
-      password: anissaPassword,
-    },
+    where: { email: 'lilly@elmarmaintenance.com' },
+    update: { password: hashedPassword },
     create: {
-      id: 'anissa',
-      email: 'anissa@example.com',
-      name: 'Anissa',
-      password: anissaPassword,
+      id: 'lilly',
+      email: 'lilly@elmarmaintenance.com',
+      name: 'Lilly',
+      password: hashedPassword,
       role: 'uploader',
     },
   });
 
-  // Create or update Reviewer
   await prisma.user.upsert({
-    where: { email: 'reviewer@example.com' },
-    update: {
-      password: reviewerPassword,
-    },
+    where: { email: 'pamela@elmarmaintenance.com' },
+    update: { password: hashedPassword },
     create: {
-      id: 'reviewer',
-      email: 'reviewer@example.com',
-      name: 'Reviewer',
-      password: reviewerPassword,
+      id: 'pamela',
+      email: 'pamela@elmarmaintenance.com',
+      name: 'Pamela',
+      password: hashedPassword,
       role: 'reviewer',
     },
   });
 
-  console.log('✅ Test users aangemaakt:');
-  console.log('   Anissa: anissa@example.com / anissa123');
-  console.log('   Reviewer: reviewer@example.com / reviewer123');
+  console.log('✅ Users aangemaakt:');
+  console.log('   Lilly: lilly@elmarmaintenance.com / Elmar@2025');
+  console.log('   Pamela: pamela@elmarmaintenance.com / Elmar@2025');
 }
 
 main()

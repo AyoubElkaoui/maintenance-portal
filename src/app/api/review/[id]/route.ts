@@ -74,7 +74,7 @@ export async function POST(
       const fromEmail = process.env.FROM_EMAIL || 'info@akwebsolutions.nl';
 
       const issuesCount = reviewedData.filter((row: ReviewedRow) => row._status === 'issue').length;
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal-cvs.vercel.app';
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://portal-elmar.vercel.app';
       const downloadUrl = `${appUrl}/download/${upload.id}`;
 
       await resend.emails.send({
