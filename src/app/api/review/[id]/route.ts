@@ -97,7 +97,7 @@ export async function POST(
                     <!-- Logo & Header -->
                     <tr>
                       <td style="background: #1a56db; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-                        <img src="https://elmarservices.com/wp-content/uploads/2024/12/LOGO-ELMAR-766x226-1-400x118.png" alt="Elmar Services" style="max-width: 200px; margin-bottom: 15px;">
+                        <img src="${appUrl}/elmar-logo.png" alt="Elmar Maintenance" style="max-width: 200px; margin-bottom: 15px;">
                         <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Review Voltooid</h1>
                       </td>
                     </tr>
@@ -183,7 +183,7 @@ export async function POST(
                         
                         <p style="margin: 0; color: #6c757d; font-size: 14px; line-height: 1.6;">
                           Met vriendelijke groet,<br>
-                          <strong style="color: #333333;">CSV Portal Team</strong>
+                          <strong style="color: #333333;">Elmar Maintenance Team</strong>
                         </p>
                       </td>
                     </tr>
@@ -192,7 +192,7 @@ export async function POST(
                     <tr>
                       <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #dee2e6;">
                         <p style="margin: 0 0 10px; color: #6c757d; font-size: 12px;">
-                          <a href="${appUrl}" style="color: #1a56db; text-decoration: none; font-weight: 500;">Ga naar CSV Portal</a>
+                          <a href="${appUrl}" style="color: #1a56db; text-decoration: none; font-weight: 500;">Ga naar het portal</a>
                         </p>
                         <p style="margin: 0; color: #adb5bd; font-size: 11px;">
                           Deze email is automatisch gegenereerd. Beantwoord deze email niet.

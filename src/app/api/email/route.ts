@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const fromEmail = process.env.FROM_EMAIL || 'info@akwebsolutions.nl';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://maintenance-portal-sand.vercel.app';
 
     // Get recipient from request body or fall back to settings
     let recipient = to;
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px;">
         <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <div style="background: #1a56db; padding: 30px; text-align: center;">
-            <img src="https://elmarservices.com/wp-content/uploads/2024/12/LOGO-ELMAR-766x226-1-400x118.png" alt="Elmar Services" style="max-width: 200px; margin-bottom: 10px;">
+            <img src="${appUrl}/elmar-logo.png" alt="Elmar Maintenance" style="max-width: 200px; margin-bottom: 10px;">
             <h1 style="color: white; margin: 0; font-size: 22px;">Factuur ${action}</h1>
           </div>
           <div style="padding: 30px;">
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
             ${opmerkingen ? `<div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px; margin: 15px 0;"><strong>Opmerkingen:</strong><br>${opmerkingen}</div>` : ''}
           </div>
           <div style="background: #f8f9fa; padding: 15px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #dee2e6;">
-            <p style="margin: 0;">&copy; ${new Date().getFullYear()} Elmar Services | CSV Portal</p>
+            <p style="margin: 0;">&copy; ${new Date().getFullYear()} Elmar Maintenance</p>
           </div>
         </div>
       </body>

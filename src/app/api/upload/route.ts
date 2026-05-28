@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
               <div style="padding: 20px; background-color: #f5f5f5;">
                 <div class="container">
                   <div class="header">
-                    <img src="https://elmarservices.com/wp-content/uploads/2024/12/LOGO-ELMAR-766x226-1-400x118.png" alt="Elmar Services" class="logo">
+                    <img src="${appUrl}/elmar-logo.png" alt="Elmar Maintenance" class="logo">
                     <h1 style="color: white; margin: 0; font-size: 24px;">Nieuwe Upload</h1>
                   </div>
                   <div class="content">
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
                     </div>
                   </div>
                   <div class="footer">
-                    <p>&copy; ${new Date().getFullYear()} Elmar Services | CSV Portal</p>
+                    <p>&copy; ${new Date().getFullYear()} Elmar Maintenance</p>
                     <p><a href="${appUrl}" style="color: #1a56db;">Portal openen</a></p>
                   </div>
                 </div>
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
               <div style="padding: 20px; background-color: #f5f5f5;">
                 <div class="container">
                   <div class="header">
-                    <img src="https://elmarservices.com/wp-content/uploads/2024/12/LOGO-ELMAR-766x226-1-400x118.png" alt="Elmar Services" class="logo">
+                    <img src="${appUrl}/elmar-logo.png" alt="Elmar Maintenance" class="logo">
                     <h1 style="color: white; margin: 0; font-size: 24px;">Upload Succesvol</h1>
                   </div>
                   <div class="content">
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
                     </div>
                   </div>
                   <div class="footer">
-                    <p>&copy; ${new Date().getFullYear()} Elmar Services | CSV Portal</p>
+                    <p>&copy; ${new Date().getFullYear()} Elmar Maintenance</p>
                     <p><a href="${appUrl}" style="color: #1a56db;">Portal openen</a></p>
                   </div>
                 </div>
