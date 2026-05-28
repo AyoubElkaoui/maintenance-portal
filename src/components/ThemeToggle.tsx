@@ -14,24 +14,21 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <button
-        className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
-        title="Thema wisselen"
-      >
-        <Monitor size={18} />
+      <button className="p-2 rounded-xl text-slate-500 dark:text-slate-400" title="Thema wisselen">
+        <Monitor size={17} />
       </button>
     );
   }
 
   const getIcon = () => {
-    if (theme === 'system') return <Monitor size={18} />;
-    return actualTheme === 'dark' ? <Moon size={18} /> : <Sun size={18} />;
+    if (theme === 'system') return <Monitor size={17} />;
+    return actualTheme === 'dark' ? <Moon size={17} /> : <Sun size={17} />;
   };
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+      className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-150"
       title={`Thema: ${theme === 'system' ? 'Systeem' : actualTheme === 'dark' ? 'Donker' : 'Licht'}`}
       suppressHydrationWarning
     >

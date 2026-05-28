@@ -391,12 +391,12 @@ export default function ReviewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0a0f1e]">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="animate-pulse bg-slate-200 dark:bg-slate-700 h-8 w-64 rounded-lg mb-8"></div>
-          <div className="animate-pulse bg-slate-200 dark:bg-slate-700 h-32 rounded-lg mb-6"></div>
-          <div className="animate-pulse bg-slate-200 dark:bg-slate-700 h-96 rounded-lg"></div>
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          <div className="animate-pulse bg-slate-200 dark:bg-slate-800 h-8 w-64 rounded-xl mb-8" />
+          <div className="animate-pulse bg-slate-200 dark:bg-slate-800 h-28 rounded-2xl mb-5" />
+          <div className="animate-pulse bg-slate-200 dark:bg-slate-800 h-96 rounded-2xl" />
         </div>
       </div>
     );
@@ -404,11 +404,11 @@ export default function ReviewPage() {
 
   if (!uploadData) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0a0f1e]">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+        <div className="max-w-7xl mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Upload niet gevonden</h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-6">De opgevraagde upload bestaat niet.</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">De opgevraagde upload bestaat niet of is verwijderd.</p>
           <a href="/dashboard" className="btn-primary inline-flex items-center">
             Terug naar Dashboard
           </a>
@@ -418,113 +418,104 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0f1e]">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Toast Notifications */}
-        <div className="fixed top-4 right-4 z-50 space-y-2">
+        <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
           {toasts.map((toast) => (
             <div
               key={toast.id}
-              className={`flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 ${
+              className={`flex items-start gap-3 p-4 rounded-2xl border text-sm font-medium shadow-lg fade-in ${
                 toast.type === 'success'
-                  ? 'bg-green-100 dark:bg-green-900/20 border border-green-400 dark:border-green-800 text-green-800 dark:text-green-400'
-                  : 'bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-800 dark:text-red-400'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300'
+                  : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50 text-red-800 dark:text-red-300'
               }`}
             >
               {toast.type === 'success' ? (
-                <CheckCircle className="w-5 h-5 mr-3 flex-shrink-0" />
+                <CheckCircle className="w-5 h-5 shrink-0 mt-0.5" />
               ) : (
-                <AlertTriangle className="w-5 h-5 mr-3 flex-shrink-0" />
+                <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
               )}
-              <span className="text-sm font-medium">{toast.message}</span>
-              <button
-                onClick={() => removeToast(toast.id)}
-                className="ml-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
+              <span className="flex-1">{toast.message}</span>
+              <button onClick={() => removeToast(toast.id)} className="opacity-60 hover:opacity-100 shrink-0">
                 <X className="w-4 h-4" />
               </button>
             </div>
           ))}
         </div>
-        <div className="flex justify-between items-center mb-6">
+
+        <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Review</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{uploadData.upload.filename}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-sm">{uploadData.upload.filename}</p>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="btn-secondary text-sm"
-            >
+            <button onClick={() => setIsFullscreen(!isFullscreen)} className="btn-secondary text-sm py-2">
               {isFullscreen ? 'Verkleinen' : 'Vergroten'}
             </button>
-            <button
-              onClick={() => window.location.href = '/dashboard'}
-              className="btn-ghost text-sm"
-            >
+            <button onClick={() => window.location.href = '/dashboard'} className="btn-ghost text-sm py-2">
               Terug
             </button>
           </div>
         </div>
 
-        <div className="card-modern p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4 text-slate-900 dark:text-white">Upload Details</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <strong className="text-slate-900 dark:text-white">Bestandsnaam:</strong> <span className="text-slate-700 dark:text-slate-300">{uploadData.upload.filename}</span>
-            </div>
-            <div>
-              <strong className="text-slate-900 dark:text-white">Status:</strong> <span className="text-slate-700 dark:text-slate-300">{uploadData.upload.status}</span>
-            </div>
-            <div>
-              <strong className="text-slate-900 dark:text-white">Totaal rijen:</strong> <span className="text-slate-700 dark:text-slate-300">{reviewedData.length}</span>
-            </div>
-            <div>
-              <strong className="text-slate-900 dark:text-white">Getoonde rijen:</strong> <span className="text-slate-700 dark:text-slate-300">{filteredAndPaginatedData.totalRows}</span>
-            </div>
+        <div className="card-modern p-5 mb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: 'Totaal rijen', value: reviewedData.length },
+              { label: 'Gefilterd', value: filteredAndPaginatedData.totalRows },
+              { label: 'Afgewezen', value: reviewedData.filter(r => r._rejected).length },
+              { label: 'Geaccepteerd', value: reviewedData.filter(r => !r._rejected).length },
+            ].map(stat => (
+              <div key={stat.label} className="text-center p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl">
+                <div className="text-xl font-bold text-slate-900 dark:text-white">{stat.value}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{stat.label}</div>
+              </div>
+            ))}
           </div>
           {issuesCount > 0 && (
-            <div className="mt-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-400 dark:border-yellow-800 rounded text-yellow-800 dark:text-yellow-400">
-              <strong>{issuesCount} rij(en) met problemen gedetecteerd</strong>
+            <div className="mt-4 flex items-center gap-2.5 px-4 py-3 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/50 rounded-xl text-sm font-semibold text-amber-800 dark:text-amber-400">
+              <AlertTriangle size={16} />
+              {issuesCount} rij(en) met problemen gedetecteerd
             </div>
           )}
         </div>
 
         {/* Search and Filter Section */}
-        <div className="card-modern p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+        <div className="card-modern p-4 mb-5">
+          <div className="flex flex-col md:flex-row gap-3 items-start md:items-center">
             {/* Search Bar */}
-            <div className="flex-1 w-full md:max-w-md">
+            <div className="flex-1 w-full">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                 <input
                   type="text"
-                  placeholder="Zoek in alle kolommen..."
+                  placeholder="Zoeken in alle kolommen..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 dark:text-white bg-white dark:bg-slate-700"
+                  className="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800/80 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 outline-none transition-all"
                 />
               </div>
             </div>
 
-            {/* Filter Toggle Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                showFilters ? 'bg-blue-600 text-white' : 'btn-secondary'
+              }`}
             >
-              <Filter size={18} />
-              {showFilters ? 'Verberg Filters' : 'Toon Filters'}
+              <Filter size={15} />
+              {showFilters ? 'Verberg' : 'Filters'}
             </button>
 
-            {/* Rows per page selector */}
             <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap">Rijen per pagina:</label>
+              <label className="text-xs font-medium text-slate-500 dark:text-slate-500 whitespace-nowrap">Per pagina:</label>
               <select
                 value={rowsPerPage}
                 onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                className="px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-md text-slate-900 dark:text-white bg-white dark:bg-slate-700 focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800/80 focus:ring-2 focus:ring-blue-500/50 outline-none"
               >
                 <option value={25}>25</option>
                 <option value={50}>50</option>
@@ -912,26 +903,30 @@ export default function ReviewPage() {
       </div>
 
       <div className="card-modern p-6">
-        <h2 className="text-lg font-semibold mb-4 text-slate-900 dark:text-white">Algemene Review Opmerkingen</h2>
+        <h2 className="font-bold mb-4 text-slate-900 dark:text-white">Algemene opmerkingen</h2>
         <textarea
           value={comments}
           onChange={(e) => setComments(e.target.value)}
           placeholder="Algemene opmerkingen over deze upload..."
-          className="w-full h-32 p-3 border border-slate-200 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 dark:text-white bg-white dark:bg-slate-700 resize-none"
+          className="w-full h-28 px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 outline-none transition-all resize-none text-sm"
         />
 
-        <div className="mt-4 flex gap-4">
+        <div className="mt-4 flex gap-3">
           <button
             onClick={handleSubmitReview}
             disabled={submitting}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary flex items-center gap-2"
           >
-            {submitting ? 'Opslaan...' : 'Review Voltooien'}
+            {submitting ? (
+              <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Opslaan...</>
+            ) : (
+              <><CheckCircle className="w-4 h-4" /> Review voltooien</>
+            )}
           </button>
 
           <button
             onClick={() => window.location.href = '/dashboard'}
-            className="bg-slate-500 hover:bg-slate-600 dark:bg-slate-600 dark:hover:bg-slate-500 text-white px-6 py-2 rounded-md transition-colors font-medium"
+            className="btn-secondary"
           >
             Annuleren
           </button>
@@ -940,8 +935,8 @@ export default function ReviewPage() {
 
       {/* Comment Modal */}
       {commentModalOpen && selectedRowIndex !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="card-modern bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="card-modern bg-white dark:bg-[#111827] max-w-md w-full mx-4 fade-in">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Opmerking toevoegen</h3>
               <button
@@ -1122,8 +1117,8 @@ export default function ReviewPage() {
 
       {/* Colleague Selection Modal */}
       {showColleagueModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="card-modern bg-white dark:bg-[#111827] max-w-md w-full fade-in">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
